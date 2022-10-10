@@ -1,0 +1,27 @@
+openapi: 3.0.0
+components:
+  schemas: {}
+  securitySchemes: {}
+info:
+  title: AWS jor JS API
+  description: AWS jor JS practitioner Service API
+  version: '1'
+paths:
+  /products:
+    get:
+      operationId: getProductsList
+      summary: Get Products List
+      description: Gets a list of all products
+      responses:
+        '200':
+          description: A list of products
+          content: {}
+  '/products/:id':
+    get:
+      operationId: getProductsById
+      summary: Get Product By Id
+      description: Gets a product by id
+      responses:
+        '200':
+          description: A list of products
+          content: {}
