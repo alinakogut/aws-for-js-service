@@ -7,6 +7,8 @@
       "@mock-data/*": ["src/mock-data/*"],
       "@models/*": ["src/models/*"],
       "@schemas/*": ["src/schemas/*"],
+      "@services/*": ["src/services/*"],
+      "@configs/*": ["src/configs/*"],
     }
   }
 }
