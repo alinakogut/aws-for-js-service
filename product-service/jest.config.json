@@ -1,0 +1,14 @@
+{
+  "preset": "ts-jest",
+  "coverageDirectory": "./coverage",
+  "testMatch": ["**/?(*.)+(spec).ts"],
+  "resetMocks": true,
+  "clearMocks": true,
+  "moduleNameMapper": {
+    "^@functions/(.*)": "<rootDir>/src/functions/$1",
+    "^@libs/(.*)": "<rootDir>/src/libs/$1",
+    "^@mock-data/(.*)": "<rootDir>/src/mock-data/$1",
+    "^@models/(.*)": "<rootDir>/src/models/$1",
+    "^@schemas/(.*)": "<rootDir>/src/schemas/$1"
+  }
+}
