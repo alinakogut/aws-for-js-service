@@ -1,33 +1,30 @@
 import { APIGatewayEvent } from 'aws-lambda';
+import { v4 as uuid } from 'uuid';
 
 import {
-  formatBadRequestResponse,
   formatJSONResponse,
   formatUnrecognizedErrorResponse,
 } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
+
 import { ProductsService } from '@services/products.service';
 import { StocksService } from '@services/stocks.service';
+import { ProductDto } from '@models/product.model';
 
-const getProductsById = async (event: APIGatewayEvent) => {
-  const id = event.pathParameters?.id;
-
-  console.log(`Get Product By Id handler. ID: ${id}`);
-
+const createProduct = async (event: APIGatewayEvent) => {
+  console.log(`Create Product handler. Body: ${event.body}`);
   try {
+    const id = uuid();
+    const productDto = event.body;
+
     const productsService = new ProductsService();
-    const product = await productsService.getProductById(id);
+    const product = await productsService.createProduct(
+      id,
+      new ProductDto(productDto)
+    );
 
     const stocksService = new StocksService();
-    const stock = await stocksService.getStockByProductId(product.id);
-
-    if (!product) {
-      return formatBadRequestResponse('Product not found');
-    }
-
-    if (!stock) {
-      return formatBadRequestResponse('Stock for requested product not found');
-    }
+    const stock = await stocksService.createStock(id, productDto.count);
 
     return formatJSONResponse({ product: { ...product, count: stock.count } });
   } catch (err) {
@@ -35,4 +32,4 @@ const getProductsById = async (event: APIGatewayEvent) => {
   }
 };
 
-export const main = middyfy(getProductsById);
+export const main = middyfy(createProduct);

@@ -16,6 +16,14 @@ paths:
         '200':
           description: A list of products
           content: {}
+    post:
+      operationId: createProduct
+      summary: Create product
+      description: Create new product
+      responses:
+        '200':
+          description: Created product
+          content: {}
   '/products/:id':
     get:
       operationId: getProductsById

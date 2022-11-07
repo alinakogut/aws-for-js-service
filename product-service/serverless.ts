@@ -1,7 +1,10 @@
 import type { AWS } from '@serverless/typescript';
 
+import { DBTables } from '@configs/db.config';
+
 import getProductsList from '@functions/products-list';
 import getProductsById from '@functions/product-by-id';
+import createProduct from '@functions/create-product';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -18,10 +21,44 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      TABLE_NAME_PRODUCTS: DBTables.Products,
+      TABLE_NAME_STOCKS: DBTables.Stocks,
+    },
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: [
+              'dynamodb:Query',
+              'dynamodb:Scan',
+              'dynamodb:GetItem',
+              'dynamodb:PutItem',
+              'dynamodb:UpdateItem',
+              'dynamodb:DeleteItem',
+            ],
+            Resource:
+              'arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.TABLE_NAME_PRODUCTS}',
+          },
+          {
+            Effect: 'Allow',
+            Action: [
+              'dynamodb:Query',
+              'dynamodb:Scan',
+              'dynamodb:GetItem',
+              'dynamodb:PutItem',
+              'dynamodb:UpdateItem',
+              'dynamodb:DeleteItem',
+            ],
+            Resource:
+              'arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.TABLE_NAME_STOCKS}',
+          },
+        ],
+      },
     },
   },
   // import the function via paths
-  functions: { getProductsList, getProductsById },
+  functions: { getProductsList, getProductsById, createProduct },
   package: { individually: true },
   custom: {
     esbuild: {

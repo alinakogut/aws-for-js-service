@@ -51,5 +51,5 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export const getProducts = () =>
+export const getMockProducts = () =>
   new Promise<Product[]>((resolve) => resolve(PRODUCTS));

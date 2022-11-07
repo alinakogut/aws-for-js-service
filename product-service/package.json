@@ -7,7 +7,8 @@
     "deploy": "serverless deploy",
     "generate:docs": "serverless openapi generate --output=swagger.yml",
     "test": "jest -c ./jest.config.json",
-    "test:coverage": "jest --coverage ./jest.config.json"
+    "test:coverage": "jest --coverage ./jest.config.json",
+    "populate-tables-data": "cd src/util ts-node ddb-tables-populate"
   },
   "engines": {
     "node": ">=14.15.0"
