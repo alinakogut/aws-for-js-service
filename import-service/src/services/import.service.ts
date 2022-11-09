@@ -2,6 +2,7 @@ import * as AWS from 'aws-sdk';
 import { Readable } from 'stream';
 
 const s3 = new AWS.S3({ region: 'eu-west-1' });
+const sqs = new AWS.SQS();
 const { BUCKET } = process.env;
 
 export class ImportService {
@@ -35,5 +36,14 @@ export class ImportService {
 
     await s3.copyObject(copyParams).promise();
     await s3.deleteObject(deleteParams).promise();
+  }
+
+  public async sendSQSMessage(data) {
+    await sqs
+      .sendMessage({
+        QueueUrl: 'catalogItemsQueue',
+        MessageBody: data,
+      })
+      .promise();
   }
 }
