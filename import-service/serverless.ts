@@ -26,6 +26,13 @@ const serverlessConfiguration: AWS = {
             Action: 's3:*',
             Resource: [`arn:aws:s3:::import-service-node-in-aws/*`],
           },
+          {
+            Effect: 'Allow',
+            Action: 'sqs:SendMessage',
+            Resource: {
+              'Fn::GetAtt': ['SQSQueue', 'Arn'],
+            },
+          },
         ],
       },
     },
@@ -41,6 +48,16 @@ const serverlessConfiguration: AWS = {
   },
   // import the function via paths
   functions: { importProductsFile, importFileParser },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: '${self:provider.environment.QUEUE_NAME}',
+        },
+      },
+    },
+  },
   package: { individually: true },
   custom: {
     esbuild: {
