@@ -4,6 +4,7 @@ import { Product, ProductDto } from '@models/product.model';
 import { Stock } from '@models/stock.model';
 
 const dynamo = new AWS.DynamoDB.DocumentClient({ region: 'eu-west-1' });
+const sns = new AWS.SNS({ region: 'eu-west-1' });
 
 const { TABLE_NAME_PRODUCTS } = process.env;
 
@@ -59,4 +60,12 @@ export class ProductsService {
       [] as Product[]
     );
   };
+
+  public sendSNSMessageAfterCreate(products: Product[]): void {
+    sns.publish({
+      Subject: 'Product was successfully created',
+      Message: JSON.stringify(products),
+      TopicArn: 'createdProductTopic',
+    });
+  }
 }

@@ -23,6 +23,8 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       TABLE_NAME_PRODUCTS: DBTables.Products,
       TABLE_NAME_STOCKS: DBTables.Stocks,
+      QUEUE_NAME: 'catalogItemsQueue',
+      SNS_TOPIC_NAME: 'createProductTopic',
     },
     iam: {
       role: {
@@ -53,12 +55,56 @@ const serverlessConfiguration: AWS = {
             Resource:
               'arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.TABLE_NAME_STOCKS}',
           },
+          {
+            Effect: 'Allow',
+            Action: ['sqs:*'],
+            Resource: [
+              {
+                'Fn::GetAtt': ['SQSQueue', 'Arn'],
+              },
+            ],
+          },
+          {
+            Effect: 'Allow',
+            Action: ['sns:*'],
+            Resource: [
+              {
+                Ref: 'SNSTopic',
+              },
+            ],
+          },
         ],
       },
     },
   },
   // import the function via paths
   functions: { getProductsList, getProductsById, createProduct },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: '${self:provider.environment.QUEUE_NAME}',
+        },
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: '${self:provider.environment.SNS_TOPIC_NAME}',
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'a.l.i.n.a22k.ogut@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic',
+          },
+        },
+      },
+    },
+  },
   package: { individually: true },
   custom: {
     esbuild: {

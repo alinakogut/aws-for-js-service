@@ -21,7 +21,10 @@ const importFileParser = async (event) => {
     };
 
     const parser = parse(parserOptions);
-    parser.on('end', () => importService.copyToOtherFolder(key));
+    parser.on('end', (data) => {
+      importService.sendSQSMessage(data);
+      importService.copyToOtherFolder(key);
+    });
 
     stream.pipe(parser);
 
