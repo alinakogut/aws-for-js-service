@@ -1,0 +1,28 @@
+service: cart-service
+
+plugins:
+  - serverless-offline
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  environment:
+    POSTGRES_HOST: '${env:PGHOST}'
+    POSTGRES_DB: '${env:PGDATABASE}'
+    POSTGRES_PORT: '${env:PGPORT}'
+    POSTGRES_DB: '${env:PGUSER}'
+    POSTGRES_PASSWORD: '${env:PGPASSWORD}'
+
+functions:
+  main:
+    handler: dist/src/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
